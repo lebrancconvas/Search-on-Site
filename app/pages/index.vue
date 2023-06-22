@@ -1,87 +1,96 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <v-card class="logo py-4 d-flex justify-center">
-        <NuxtLogo />
-        <VuetifyLogo />
-      </v-card>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>
-            Vuetify is a progressive Material Design component framework for
-            Vue.js. It was designed to empower developers to create amazing
-            applications.
-          </p>
-          <p>
-            For more information on Vuetify, check out the
-            <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation </a
-            >.
-          </p>
-          <p>
-            If you have questions, please join the official
-            <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord </a
-            >.
-          </p>
-          <p>
-            Find a bug? Report it on the github
-            <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board </a
-            >.
-          </p>
-          <p>
-            Thank you for developing with Vuetify and I look forward to bringing
-            more exciting features in the future.
-          </p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3" />
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br />
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" nuxt to="/inspire"> Continue </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+  <div>
+    <header>
+      <div>
+        <h1>Search on Site</h1>
+      </div>
+    </header>
+    <section id="search-section">
+      <label for="search-input">Base Website</label>
+      <v-text-field id="search-input" name="Website" v-model="website" />
+      <div id="search-term" v-for="(term, index) in searchTerms" :key="index">
+        <label for="search-input">Search Term</label>
+        <v-text-field id="search-input" name="Search Term" v-model="term.searchKeyword" />
+        <label for="check-strict">Check Strict</label>
+        <v-checkbox id="check-strict" name="Strict" v-model="term.isStrict" />
+        <v-btn color="blue" @click="deleteSearchTerm">Delete Search Term</v-btn>
+      </div>
+    </section>
+    <section id="action-section">
+      <v-btn color="orange" @click="addSearchTerm">Add Search Term</v-btn>
+      <v-btn color="green" @click="searchHandle">Search</v-btn>
+      <v-btn color="red" @click="reset">Reset</v-btn>
+    </section>
+  </div>
 </template>
 
-<script>
-export default {
-  name: 'IndexPage',
-}
+<script lang="ts">
+  export default {
+    data() {
+      return {
+        website: '',
+        searchTerms: [
+          {
+            searchKeyword: '',
+            isStrict: false
+          }
+        ],
+        search: ''
+      }
+    },
+    methods: {
+      addSearchTerm() {
+        this.searchTerms.push({
+          searchKeyword: '',
+          isStrict: false
+        })
+      },
+      searchHandle() {
+        // https://www.google.com/search?q=site%3Ayoutube.com+%22Video%22+%2B+Edit+
+        let searchTermArray = this.searchTerms.map((term) => {
+          if(term.isStrict) {
+            term.searchKeyword = `%22${term.searchKeyword}%22`;
+          }
+          return term.searchKeyword;
+        });
+        let searchTermJoin = searchTermArray.join('+%2B+');
+        this.search = `https://www.google.com/search?q=site%3A${this.website} ${searchTermJoin}`;
+        // Redirect to Google Search new tab
+        window.open(this.search, '_blank');
+      },
+      reset() {
+        this.website = '';
+        this.searchTerms = [
+          {
+            searchKeyword: '',
+            isStrict: false
+          }
+        ];
+        this.search = '';
+      },
+      deleteSearchTerm() {
+        this.searchTerms.pop();
+      }
+    }
+  }
 </script>
+
+<style lang="css" scoped>
+  header {
+    text-align: center;
+  }
+
+  #search-section {
+    width: 50%;
+    margin: 10px auto;
+  }
+
+  #search-term {
+    margin: 10px 0;
+  }
+
+  #action-section {
+    margin: 10px auto;
+    text-align: center;
+  }
+</style>
