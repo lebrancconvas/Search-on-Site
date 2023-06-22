@@ -24,73 +24,72 @@
   </div>
 </template>
 
-<script lang="ts">
-  export default {
-    data() {
-      return {
-        website: '',
-        searchTerms: [
-          {
-            searchKeyword: '',
-            isStrict: false
-          }
-        ],
-        search: ''
-      }
-    },
-    methods: {
-      addSearchTerm() {
-        this.searchTerms.push({
+<script>
+export default {
+  data() {
+    return {
+      website: '',
+      searchTerms: [
+        {
           searchKeyword: '',
           isStrict: false
-        })
-      },
-      searchHandle() {
-        // https://www.google.com/search?q=site%3Ayoutube.com+%22Video%22+%2B+Edit+
-        let searchTermArray = this.searchTerms.map((term) => {
-          if(term.isStrict) {
-            term.searchKeyword = `%22${term.searchKeyword}%22`;
-          }
-          return term.searchKeyword;
-        });
-        let searchTermJoin = searchTermArray.join('+%2B+');
-        this.search = `https://www.google.com/search?q=site%3A${this.website} ${searchTermJoin}`;
-        // Redirect to Google Search new tab
-        window.open(this.search, '_blank');
-      },
-      reset() {
-        this.website = '';
-        this.searchTerms = [
-          {
-            searchKeyword: '',
-            isStrict: false
-          }
-        ];
-        this.search = '';
-      },
-      deleteSearchTerm() {
-        this.searchTerms.pop();
-      }
+        }
+      ],
+      search: ''
+    }
+  },
+  methods: {
+    addSearchTerm() {
+      this.searchTerms.push({
+        searchKeyword: '',
+        isStrict: false
+      })
+    },
+    searchHandle() {
+      let searchTermArray = this.searchTerms.map((term) => {
+        if (term.isStrict) {
+          term.searchKeyword = `%22${term.searchKeyword}%22`;
+        }
+        return term.searchKeyword;
+      });
+      let searchTermJoin = searchTermArray.join('+%2B+');
+      this.search = `https://www.google.com/search?q=site%3A${this.website} ${searchTermJoin}`;
+      // Redirect to Google Search new tab
+      window.open(this.search, '_blank');
+    },
+    reset() {
+      this.website = '';
+      this.searchTerms = [
+        {
+          searchKeyword: '',
+          isStrict: false
+        }
+      ];
+      this.search = '';
+    },
+    deleteSearchTerm() {
+      this.searchTerms.pop();
     }
   }
+}
 </script>
 
 <style lang="css" scoped>
-  header {
-    text-align: center;
-  }
+header {
+  text-align: center;
+}
 
-  #search-section {
-    width: 50%;
-    margin: 10px auto;
-  }
+#search-section {
+  width: 50%;
+  margin: 10px auto;
+}
 
-  #search-term {
-    margin: 10px 0;
-  }
+#search-term {
+  margin: 10px 0;
+}
 
-  #action-section {
-    margin: 10px auto;
-    text-align: center;
-  }
+#action-section {
+  margin: 10px auto;
+  text-align: center;
+}
 </style>
